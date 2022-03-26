@@ -50,7 +50,7 @@ def fix_name(string: str) -> tuple[bool, str]:
         return (False, string)
     if ask(f"I found invalid file name({string}). I can fix that for you right now."):
         string = string.replace(' ', '_').replace('&', 'and').lower()
-        string = "".join(char if char.isalnum() else ord(char)
+        string = "".join(char if char.isalnum() else str(ord(char))
                          for char in string)
         return True, string
     return False, string
