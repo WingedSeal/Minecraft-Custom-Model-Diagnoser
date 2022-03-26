@@ -247,7 +247,7 @@ def check_files(path: Path) -> None:
         raise NoQuickFix("I got some unmatched names...\n"+'\n'.join(strings))
 
 
-def diagnose(path: Path, is_backup: bool = False):
+def _diagnose(path: Path, is_backup: bool = False):
     global AUTO_FIX
     if not (path/'pack.mcmeta').is_file():
         raise ResourcePackError(
@@ -292,9 +292,9 @@ def backup(path: Path) -> None:
     print(BOT_NAME+"I'm done coppying, let's start.")
 
 
-def main():
+def diagnose(path: Path):
     try:
-        diagnose(Path(sys.argv[0]).parent, is_backup=True)
+        _diagnose(path.parent, is_backup=True)
     except ResourcePackError as error:
         print(BOT_NAME+error.args[0])
         getpass("Press enter to exit...")
@@ -305,11 +305,15 @@ def main():
         print(BOT_NAME+"No quick-fix is avaliable. I cannot fix this part.")
         print(BOT_NAME+"Fix this part yourself and try again.")
         getpass("Press enter to try again...")
-        main()
+        diagnose()
     except Exception as error:
         print(BOT_NAME+"My creator messed up again. Send him this:\n")
         traceback.print_exc()
         getpass("Press enter to exit...")
+
+
+def main():
+    diagnose(Path(sys.argv[0]))
 
 
 if __name__ == '__main__':
