@@ -215,6 +215,7 @@ def check_files(path: Path) -> None:
         if not file_path.is_file():
             continue
         check_non_png(file_path)
+        print(file_path)
         is_new, new_name = fix_name(
             file_path.relative_to(path).as_posix())
         if is_new:
@@ -245,16 +246,16 @@ def check_files(path: Path) -> None:
     strings = []
     if (diff := set_of_model_key-set_of_model_file):
         strings.append(
-            f"File not found for model keys: {diff}")
+            f"File not found for model keys: {[fix_name(stem) for stem in diff]!r}")
     if (diff := set_of_model_file-set_of_model_key):
         strings.append(
-            f"Unused model files: {[f'{stem}.json' for stem in diff]!r}")
+            f"Unused model files: {[f'{fix_name(stem)}.json' for stem in diff]!r}")
     if (diff := set_of_textures_key-set_of_textures_file):
         strings.append(
-            f"File not found for texture keys: {diff}")
+            f"File not found for texture keys: {[fix_name(stem) for stem in diff]!r}")
     if (diff := set_of_textures_file-set_of_textures_key):
         strings.append(
-            f"Unused texture files: {[f'{stem}.png' for stem in diff]!r}")
+            f"Unused texture files: {[f'{fix_name(stem)}.png' for stem in diff]!r}")
     if strings:
         raise NoQuickFix("I got some unmatched names...\n"+'\n'.join(strings))
 
