@@ -185,7 +185,7 @@ def is_vanilla_json(file_path: Path, json: dict[str, str]) -> bool:
         raise ResourcePackError(
             f"I can't find `textures` key in {file_path.resolve().as_posix()}. You did not export it from BlockBench properly. (Or any other tool you are using)")
     if "parent" in json and "layer0" in json["textures"]:
-        if json["textures"]["layer0"] != f"item/{file_path.stem}" or json["textures"]["layer0"] == f"minecraft:item/{file_path.stem}":
+        if json["textures"]["layer0"] != f"item/{file_path.stem}" and json["textures"]["layer0"] != f"minecraft:item/{file_path.stem}":
             if ask(f'Incorrect layer0 for vanilla json in {file_path.resolve().as_posix()} Expected `item/{file_path.stem}` got `{json["textures"]["layer0"]}`\nIf this is not a vanilla item then something is terribly wrong.'):
                 json["textures"]["layer0"] = f"item/{file_path.stem}"
                 with file_path.open('w+') as file:
