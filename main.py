@@ -215,7 +215,6 @@ def check_files(path: Path) -> None:
         if not file_path.is_file():
             continue
         check_non_png(file_path)
-        print(file_path)
         is_new, new_name = fix_name(
             file_path.relative_to(path).as_posix())
         if is_new:
