@@ -290,6 +290,7 @@ def _diagnose(path: Path, is_backup: bool = False):
         print(BOT_NAME+"That should be everything, try reloading the resourcepack with `F3+T` and see if it works~")
     else:
         print(BOT_NAME+"Sorry, I can't find a single error in your resourcepack...")
+    getpass("Press enter to exit...")
 
 
 def backup(path: Path) -> None:
