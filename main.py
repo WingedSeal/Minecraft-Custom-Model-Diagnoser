@@ -307,7 +307,7 @@ def diagnose(path: Path):
         print(BOT_NAME+"No quick-fix is avaliable. I cannot fix this part.")
         print(BOT_NAME+"Fix this part yourself and try again.")
         getpass("Press enter to try again...")
-        diagnose()
+        diagnose(path)
     except Exception as error:
         print(BOT_NAME+"My creator messed up again. Send him this:\n")
         traceback.print_exc()
