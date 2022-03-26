@@ -178,7 +178,8 @@ def is_vanilla_json(file_path: Path, json: dict[str, str]) -> bool:
             f"I can't find `textures` key in {file_path.resolve().as_posix()}. You did not export it from BlockBench properly. (Or any other tool you are using)")
     return ("parent" in json and
             "layer0" in json["textures"] and
-            json["textures"]["layer0"] == f"item/{file_path.stem}"
+            (json["textures"]["layer0"] ==
+             f"item/{file_path.stem}" or json["textures"]["layer0"] == f"minecraft:item/{file_path.stem}")
             )
 
 
