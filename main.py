@@ -128,7 +128,8 @@ def check_vanilla_json(file_path: Path, json: dict[str, str]) -> str:
         custom_model_data = [override["predicate"]["custom_model_data"]
                              for override in json["overrides"]]
     except KeyError as error:
-        raise NoQuickFix(error.args[0])
+        raise NoQuickFix(
+            f"{error.args[0]} isn't in {file_path.resolve().as_posix()}")
 
     last_custom_model_data = -1
     for number in custom_model_data:
