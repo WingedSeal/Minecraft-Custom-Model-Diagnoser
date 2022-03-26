@@ -153,18 +153,25 @@ def check_vanilla_json(file_path: Path, json: dict[str, str]) -> str:
             for override in json["overrides"]]
 
 
+def clear_png(file_path: Path, texture: str) -> str:
+    if texture.endswith('.png'):
+        if ask(f"{texture} is not a valid texture because it ends with `.png` in {file_path.resolve().as_posix()}\nLet me remove that for you?"):
+            texture = texture[:-4]
+    return fix_name(texture)[1]
+
+
 def check_custom_json(file_path: Path, json: dict[str, str]) -> str:
     if not isinstance(json["textures"], dict):
         raise NoQuickFix(
-            f"value of `textures` is not JSON in {file_path.resolve().as_posix()} You did not export it from BlockBench properly. (Or any other tool you are using)")
+            f"value of `textures` is not JSON in {file_path.resolve().as_posix()}\nYou did not export it from BlockBench properly. (Or any other tool you are using)")
     if "elements" not in json:
         raise NoQuickFix(
-            f"`elements` key not found in {file_path.resolve().as_posix()}. You did not export it from BlockBench properly. (Or any other tool you are using)")
+            f"`elements` key not found in {file_path.resolve().as_posix()}\nYou did not export it from BlockBench properly. (Or any other tool you are using)")
     if '"#missing' in dumps(json):
         raise NoQuickFix(
-            f"`#missing` texture found in {file_path.resolve().as_posix()}. You did not give texture file to BlockBench properly.")
+            f"`#missing` texture found in {file_path.resolve().as_posix()}\nYou did not give texture file to BlockBench properly.")
 
-    fixed_textures = {key: fix_name(texture)[1]
+    fixed_textures = {key: clear_png(file_path, texture)
                       for key, texture in json["textures"].items()}
     if json["textures"] != fixed_textures and ask(f"Invalid textures file found in {file_path.resolve().as_posix()} I think I can fix it."):
         json["textures"] = fixed_textures
@@ -177,11 +184,14 @@ def is_vanilla_json(file_path: Path, json: dict[str, str]) -> bool:
     if "textures" not in json:
         raise ResourcePackError(
             f"I can't find `textures` key in {file_path.resolve().as_posix()}. You did not export it from BlockBench properly. (Or any other tool you are using)")
-    return ("parent" in json and
-            "layer0" in json["textures"] and
-            (json["textures"]["layer0"] ==
-             f"item/{file_path.stem}" or json["textures"]["layer0"] == f"minecraft:item/{file_path.stem}")
-            )
+    if "parent" in json and "layer0" in json["textures"]:
+        if json["textures"]["layer0"] != f"item/{file_path.stem}" or json["textures"]["layer0"] == f"minecraft:item/{file_path.stem}":
+            if ask(f'Incorrect layer0 for vanilla json in {file_path.resolve().as_posix()} Expected `item/{file_path.stem}` got `{json["textures"]["layer0"]}`'):
+                json["textures"]["layer0"] = f"item/{file_path.stem}"
+                with file_path.open('w+') as file:
+                    dump(json, file, indent=INDENT_LV)
+        return True
+    return False
 
 
 def check_files(path: Path) -> None:
