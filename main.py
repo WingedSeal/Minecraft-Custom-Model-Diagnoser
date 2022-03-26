@@ -46,11 +46,12 @@ def ask(question: str) -> bool:
 
 
 def fix_name(string: str) -> tuple[bool, str]:
-    if string.islower() and ' ' not in string and string.isalnum():
+    if string.islower() and ' ' not in string and (string.isalnum() or any(char in string for char in ['.', '/', '_'])):
         return (False, string)
     if ask(f"I found invalid file name({string}). I can fix that for you right now."):
-        string = string.replace(' ', '_').replace('&', 'and').lower()
-        string = "".join(char if char.isalnum() else str(ord(char))
+        string = string.replace(' ', '_').replace(
+            '-', '_').replace('&', 'and').lower()
+        string = "".join(char if (char.isalnum() or char in ['.', '/', '_']) else str(ord(char))
                          for char in string)
         return True, string
     return False, string
