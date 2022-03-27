@@ -105,7 +105,8 @@ def check_non_png(file_path: Path) -> None:
     if file_path.suffix != '.png':
         if ask(f"I found `{file_path.name}` file which isn't png file. Would you like me to change that?"):
             if file_path.stem.endswith(".json"):
-                file_path = file_path.rename(Path(file_path.parent, file_path.stem))
+                file_path = file_path.rename(
+                    Path(file_path.parent, file_path.stem))
             else:
                 file_path = file_path.rename(
                     Path(file_path.parent, file_path.stem+'.png'))
