@@ -94,9 +94,10 @@ def check_non_json(file_path: Path) -> None:
     if file_path.suffix != '.json':
         if ask(f"I found `{file_path.name}` file which isn't json file. Would you like me to change that?"):
             if file_path.stem.endswith(".json"):
-                file_path.rename(Path(file_path.parent, file_path.stem))
+                file_path = file_path.rename(
+                    Path(file_path.parent, file_path.stem))
             else:
-                file_path.rename(
+                file_path = file_path.rename(
                     Path(file_path.parent, file_path.stem+'.json'))
 
 
@@ -104,9 +105,9 @@ def check_non_png(file_path: Path) -> None:
     if file_path.suffix != '.png':
         if ask(f"I found `{file_path.name}` file which isn't png file. Would you like me to change that?"):
             if file_path.stem.endswith(".json"):
-                file_path.rename(Path(file_path.parent, file_path.stem))
+                file_path = file_path.rename(Path(file_path.parent, file_path.stem))
             else:
-                file_path.rename(
+                file_path = file_path.rename(
                     Path(file_path.parent, file_path.stem+'.png'))
 
 
@@ -150,8 +151,11 @@ def check_vanilla_json(file_path: Path, json: dict[str, str]) -> str:
             dump(json, file, indent=INDENT_LV)
 
     for index in range(len(json["overrides"])):
-        _, json["overrides"][index]["model"] = fix_name(
-            json["overrides"][index]["model"])
+        if json["overrides"][index]["model"].endswith('.json'):
+            if ask(f'{json["overrides"][index]["model"]} is not a valid texture because it ends with `.json` in {file_path.resolve().as_posix()}\nLet me remove that for you?'):
+                json["overrides"][index]["model"] = json["overrides"][index]["model"][:-5]
+        json["overrides"][index]["model"] = fix_name(
+            json["overrides"][index]["model"])[1]
 
     return [override["model"]
             for override in json["overrides"]]
@@ -222,7 +226,7 @@ def check_files(path: Path) -> None:
         is_new, new_name = fix_name(
             file_path.relative_to(path).as_posix())
         if is_new:
-            file_path.rename(path/new_name)
+            file_path = file_path.rename(path/new_name)
         set_of_textures_file.add(file_path.relative_to(
             texture_dir).parent.as_posix()+'/'+file_path.stem)
 
@@ -235,7 +239,7 @@ def check_files(path: Path) -> None:
         is_new, new_name = fix_name(
             file_path.relative_to(path).as_posix())
         if is_new:
-            file_path.rename(path/new_name)
+            file_path = file_path.rename(path/new_name)
 
         if is_vanilla_json(file_path, json):
             for model in check_vanilla_json(file_path, json):
@@ -249,16 +253,16 @@ def check_files(path: Path) -> None:
     strings = []
     if (diff := set_of_model_key-set_of_model_file):
         strings.append(
-            f"File not found for model keys: {[fix_name(stem)[1] for stem in diff]!r}")
+            f"File not found for model keys: {[stem for stem in diff]!r}")
     if (diff := set_of_model_file-set_of_model_key):
         strings.append(
-            f"Unused model files: {[f'{fix_name(stem)[1]}.json' for stem in diff]!r}")
+            f"Unused model files: {[f'{stem}.json' for stem in diff]!r}")
     if (diff := set_of_textures_key-set_of_textures_file):
         strings.append(
-            f"File not found for texture keys: {[fix_name(stem)[1] for stem in diff]!r}")
+            f"File not found for texture keys: {[stem for stem in diff]!r}")
     if (diff := set_of_textures_file-set_of_textures_key):
         strings.append(
-            f"Unused texture files: {[f'{fix_name(stem)[1]}.png' for stem in diff]!r}")
+            f"Unused texture files: {[f'{stem}.png' for stem in diff]!r}")
     if strings:
         raise NoQuickFix("I got some unmatched names...\n"+'\n'.join(strings))
 
