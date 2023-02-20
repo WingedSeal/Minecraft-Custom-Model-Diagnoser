@@ -11,6 +11,9 @@ If you have python (3.9+) installed in your computer. Then you can use `.py` ins
 
 Sometimes, Windows can't tell what app it is, so it prevent it from running.
 ![image](https://user-images.githubusercontent.com/84555581/220153830-204c2bc6-a453-4f8d-81f4-cbb9dd1cbbdd.png)
+
 ![image](https://user-images.githubusercontent.com/84555581/220153867-90d7cb41-34ff-49ee-9811-ae5d53803104.png)
+
 ![image](https://user-images.githubusercontent.com/84555581/220153881-567cb5dc-1df7-4ef2-acc4-961bcce57031.png)
+
 ![image](https://user-images.githubusercontent.com/84555581/220153890-b2475564-2f6d-46ff-99ed-d29f96700861.png)
